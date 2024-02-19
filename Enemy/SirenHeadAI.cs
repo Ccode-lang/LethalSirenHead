@@ -23,6 +23,8 @@ namespace LethalSirenHead.Enemy
 
         PlayerControllerB[] players;
 
+        GameObject HandBone;
+
         public override void DoAIInterval()
         {
             base.DoAIInterval();
