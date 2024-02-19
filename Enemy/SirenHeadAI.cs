@@ -96,7 +96,8 @@ namespace LethalSirenHead.Enemy
             this.inSpecialAnimation = true;
             PlayerObject.isInElevator = false;
             PlayerObject.isInHangarShipRoom = false;
-            PlayerObject.transform.SetParent(this.transform.Find("SirenHead/Skeleton/ROOT/Spine/Spine1/Spine2/shoulder.L/Arm1.L/Arm1.L.001/LeftForeArm.001/LeftHand"));
+            PlayerObject.transform.SetParent(GameObject.FindWithTag("HandToEatFrom").transform);
+            PlayerObject.transform.position = GameObject.FindWithTag("HandToEatFrom").transform.position;
             yield return new WaitForSeconds(2.916f);
             this.inSpecialAnimation = false;
             PlayerObject.KillPlayer(Vector3.zero, false, CauseOfDeath.Crushing, 0);
