@@ -1,4 +1,5 @@
 ﻿using GameNetcodeStuff;
+using LethalLib.Modules;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -68,36 +69,37 @@ namespace LethalSirenHead.Enemy
                 }
                 if (this.IsHost || this.IsServer)
                 {
-                    StartEatingPlayerClientRpc(player);
+                    StartEatingPlayerClientRpc(player.playerClientId);
                 }
                 else
                 {
-                    RequestStartEatingPlayerServerRpc(player);
+                    RequestStartEatingPlayerServerRpc(player.playerClientId);
                 }
             }
         }
         [ServerRpc(RequireOwnership = false)]
-        public void RequestStartEatingPlayerServerRpc(PlayerControllerB player)
+        public void RequestStartEatingPlayerServerRpc(ulong player)
         {
             StartEatingPlayerClientRpc(player);
         }
 
         [ClientRpc]
-        public void StartEatingPlayerClientRpc(PlayerControllerB player)
+        public void StartEatingPlayerClientRpc(ulong player)
         {
             this.StartCoroutine(EatPlayer(player));
         }
 
-        public IEnumerator EatPlayer(PlayerControllerB player)
+        public IEnumerator EatPlayer(ulong player)
         {
+            PlayerControllerB PlayerObject = StartOfRound.Instance.allPlayerScripts[player];
             this.creatureAnimator.SetBool("Eating", true);
             this.inSpecialAnimation = true;
-            player.isInElevator = false;
-            player.isInHangarShipRoom = false;
-            player.transform.SetParent(this.transform.Find("SirenHead/Skeleton/ROOT/Spine/Spine1/Spine2/shoulder.L/Arm1.L/Arm1.L.001/LeftForeArm.001/LeftHand"));
+            PlayerObject.isInElevator = false;
+            PlayerObject.isInHangarShipRoom = false;
+            PlayerObject.transform.SetParent(this.transform.Find("SirenHead/Skeleton/ROOT/Spine/Spine1/Spine2/shoulder.L/Arm1.L/Arm1.L.001/LeftForeArm.001/LeftHand"));
             yield return new WaitForSeconds(2.916f);
             this.inSpecialAnimation = false;
-            player.KillPlayer(Vector3.zero, false, CauseOfDeath.Crushing, 0);
+            PlayerObject.KillPlayer(Vector3.zero, false, CauseOfDeath.Crushing, 0);
             base.SwitchToBehaviourState((int)State.WANDERING);
             this.creatureAnimator.SetBool("Eating", false);
             yield break;
