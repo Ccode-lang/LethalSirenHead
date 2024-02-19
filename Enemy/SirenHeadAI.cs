@@ -1,5 +1,6 @@
 ﻿using GameNetcodeStuff;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -57,8 +58,47 @@ namespace LethalSirenHead.Enemy
             PlayerControllerB player = other.gameObject.GetComponent<PlayerControllerB>();
             if (player != null)
             {
-                player.KillPlayer(new Vector3(0, 0, 0));
+                if (player.isPlayerDead)
+                {
+                    return;
+                }
+                if (!player.AllowPlayerDeath())
+                {
+                    return;
+                }
+                if (this.IsHost || this.IsServer)
+                {
+                    StartEatingPlayerClientRpc(player);
+                }
+                else
+                {
+                    RequestStartEatingPlayerServerRpc(player);
+                }
             }
+        }
+        [ServerRpc(RequireOwnership = false)]
+        public void RequestStartEatingPlayerServerRpc(PlayerControllerB player)
+        {
+            StartEatingPlayerClientRpc(player);
+        }
+
+        [ClientRpc]
+        public void StartEatingPlayerClientRpc(PlayerControllerB player)
+        {
+            this.StartCoroutine(EatPlayer(player));
+        }
+
+        public IEnumerator EatPlayer(PlayerControllerB player)
+        {
+            this.creatureAnimator.SetBool("Eating", true);
+            this.inSpecialAnimation = true;
+            player.isInElevator = false;
+            player.isInHangarShipRoom = false;
+            yield return new WaitForSeconds(2.916f);
+            this.inSpecialAnimation = false;
+            player.KillPlayer(Vector3.zero, false, CauseOfDeath.Crushing, 0);
+            base.SwitchToBehaviourState((int)State.WANDERING);
+            yield break;
         }
     }
 }
