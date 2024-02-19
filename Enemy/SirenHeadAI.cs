@@ -94,10 +94,12 @@ namespace LethalSirenHead.Enemy
             this.inSpecialAnimation = true;
             player.isInElevator = false;
             player.isInHangarShipRoom = false;
+            player.transform.SetParent(this.transform.Find("SirenHead/Skeleton/ROOT/Spine/Spine1/Spine2/shoulder.L/Arm1.L/Arm1.L.001/LeftForeArm.001/LeftHand"));
             yield return new WaitForSeconds(2.916f);
             this.inSpecialAnimation = false;
             player.KillPlayer(Vector3.zero, false, CauseOfDeath.Crushing, 0);
             base.SwitchToBehaviourState((int)State.WANDERING);
+            this.creatureAnimator.SetBool("Eating", false);
             yield break;
         }
     }
