@@ -23,8 +23,6 @@ namespace LethalSirenHead.Enemy
 
         PlayerControllerB[] players;
 
-        GameObject HandBone;
-
         public override void DoAIInterval()
         {
             base.DoAIInterval();
@@ -55,10 +53,22 @@ namespace LethalSirenHead.Enemy
             }
         }
 
+        public void LateUpdate()
+        {
+            if (this.inSpecialAnimationWithPlayer != null)
+            {
+                this.inSpecialAnimationWithPlayer.transform.position = gameObject.GetComponent<SirenHeadVars>().holdPlayerPoint.position;
+                this.inSpecialAnimationWithPlayer.transform.rotation = gameObject.GetComponent<SirenHeadVars>().holdPlayerPoint.rotation;
+            }
+        }
+
         public override void OnCollideWithPlayer(UnityEngine.Collider other)
         {
             base.OnCollideWithPlayer(other);
             PlayerControllerB player = other.gameObject.GetComponent<PlayerControllerB>();
+            this.inSpecialAnimationWithPlayer = player;
+            this.inSpecialAnimationWithPlayer.inSpecialInteractAnimation = true;
+            this.inSpecialAnimationWithPlayer.inAnimationWithEnemy = this;
             if (player != null)
             {
                 if (player.isPlayerDead)
@@ -98,13 +108,12 @@ namespace LethalSirenHead.Enemy
             this.inSpecialAnimation = true;
             PlayerObject.isInElevator = false;
             PlayerObject.isInHangarShipRoom = false;
-            PlayerObject.transform.SetParent(GameObject.FindWithTag("HandToEatFrom").transform);
-            PlayerObject.transform.position = GameObject.FindWithTag("HandToEatFrom").transform.position;
             yield return new WaitForSeconds(2.916f);
             this.inSpecialAnimation = false;
             PlayerObject.KillPlayer(Vector3.zero, false, CauseOfDeath.Crushing, 0);
             base.SwitchToBehaviourState((int)State.WANDERING);
             this.creatureAnimator.SetBool("Eating", false);
+            this.inSpecialAnimation = false;
             yield break;
         }
     }
