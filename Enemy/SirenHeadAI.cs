@@ -57,8 +57,9 @@ namespace LethalSirenHead.Enemy
         {
             if (this.inSpecialAnimationWithPlayer != null)
             {
-                this.inSpecialAnimationWithPlayer.transform.position = gameObject.GetComponent<SirenHeadVars>().holdPlayerPoint.position;
-                this.inSpecialAnimationWithPlayer.transform.rotation = gameObject.GetComponent<SirenHeadVars>().holdPlayerPoint.rotation;
+                SirenHeadVars vars = gameObject.GetComponent<SirenHeadVars>();
+                this.inSpecialAnimationWithPlayer.transform.position = vars.holdPlayerPoint.position;
+                this.inSpecialAnimationWithPlayer.transform.rotation = Quaternion.Euler(vars.holdPlayerPoint.rotation.x, vars.holdPlayerPoint.rotation.y + 180, vars.holdPlayerPoint.rotation.z);
             }
         }
 
@@ -108,12 +109,12 @@ namespace LethalSirenHead.Enemy
             this.inSpecialAnimation = true;
             PlayerObject.isInElevator = false;
             PlayerObject.isInHangarShipRoom = false;
-            yield return new WaitForSeconds(2.916f);
+            yield return new WaitForSeconds(7.29f);
             this.inSpecialAnimation = false;
             PlayerObject.KillPlayer(Vector3.zero, false, CauseOfDeath.Crushing, 0);
             base.SwitchToBehaviourState((int)State.WANDERING);
             this.creatureAnimator.SetBool("Eating", false);
-            this.inSpecialAnimation = false;
+            this.inSpecialAnimationWithPlayer = null;
             yield break;
         }
     }
