@@ -115,6 +115,8 @@ namespace LethalSirenHead.Enemy
             base.SwitchToBehaviourState((int)State.WANDERING);
             this.creatureAnimator.SetBool("Eating", false);
             this.inSpecialAnimationWithPlayer = null;
+            PlayerObject.inSpecialInteractAnimation = false;
+            PlayerObject.inAnimationWithEnemy = null;
             yield break;
         }
     }
