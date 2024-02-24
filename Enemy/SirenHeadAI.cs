@@ -33,12 +33,14 @@ namespace LethalSirenHead.Enemy
                 case (int)State.WANDERING:
                     if (!wander.inProgress)
                     {
+                        this.agent.speed = 3.5f;
                         base.StartSearch(base.transform.position, wander);
                     }
 
                     if (players != null)
                     {
                         base.StopSearch(wander);
+                        this.agent.speed = 12f;
                         SwitchToBehaviourClientRpc((int)State.CHASING);
                     }
                     break;
