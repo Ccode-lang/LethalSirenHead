@@ -58,7 +58,7 @@ namespace LethalSirenHead.Enemy
             if (this.inSpecialAnimationWithPlayer != null)
             {
                 SirenHeadVars vars = gameObject.GetComponent<SirenHeadVars>();
-                this.inSpecialAnimationWithPlayer.transform.position = vars.holdPlayerPoint.position;
+                this.inSpecialAnimationWithPlayer.transform.position = new Vector3(vars.holdPlayerPoint.position.x, vars.holdPlayerPoint.position.y - 0.2f, vars.holdPlayerPoint.position.z);
                 this.inSpecialAnimationWithPlayer.transform.rotation = Quaternion.Euler(vars.holdPlayerPoint.rotation.x, vars.holdPlayerPoint.rotation.y + 180, vars.holdPlayerPoint.rotation.z);
             }
         }
