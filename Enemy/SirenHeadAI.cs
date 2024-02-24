@@ -13,9 +13,10 @@ namespace LethalSirenHead.Enemy
 {
     public class SirenHeadAI : EnemyAI
     {
-        enum State
+        public enum State
         {
             WANDERING,
+            TREEING,
             CHASING
         }
 
@@ -23,11 +24,22 @@ namespace LethalSirenHead.Enemy
 
         PlayerControllerB[] players;
 
+        PlayerControllerB[] closePlayers;
+
+        State LastState = State.WANDERING;
+        public override void Start()
+        {
+            base.Start();
+            SwitchToBehaviourClientRpc((int)State.TREEING);
+        }
         public override void DoAIInterval()
         {
             base.DoAIInterval();
             // Make sure to set the eye in the prefab or this won't work.
             players = base.GetAllPlayersInLineOfSight(50f, 70, this.eye, 3f, StartOfRound.Instance.collidersRoomDefaultAndFoliage);
+
+            closePlayers = base.GetAllPlayersInLineOfSight(50f, 20, this.eye, 3f, StartOfRound.Instance.collidersRoomDefaultAndFoliage);
+
             switch (currentBehaviourStateIndex)
             {
                 case (int)State.WANDERING:
@@ -44,6 +56,25 @@ namespace LethalSirenHead.Enemy
                         SwitchToBehaviourClientRpc((int)State.CHASING);
                     }
                     break;
+                case (int)State.TREEING:
+                    if (LastState != State.TREEING)
+                    {
+                        this.creatureAnimator.SetBool("Tree", true);
+                        this.inSpecialAnimation = true;
+                    }
+                    if (closePlayers != null)
+                    {
+                        this.agent.speed = 12f;
+                        if (this.IsHost || this.IsServer)
+                        {
+                            UntreeClientRpc((int)State.CHASING);
+                        }
+                        else
+                        {
+                            RequestUntreeServerRpc((int)State.CHASING);
+                        }
+                    }
+                    break;
                 case (int)State.CHASING:
                     if (players == null)
                     {
@@ -53,6 +84,7 @@ namespace LethalSirenHead.Enemy
                     SetDestinationToPosition(players[0].transform.position);
                     break;
             }
+            LastState = (State)currentBehaviourStateIndex;
         }
 
         public void LateUpdate()
@@ -102,6 +134,27 @@ namespace LethalSirenHead.Enemy
         public void StartEatingPlayerClientRpc(ulong player)
         {
             this.StartCoroutine(EatPlayer(player));
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void RequestUntreeServerRpc(int state)
+        {
+            UntreeClientRpc(state);
+        }
+        [ClientRpc]
+        public void UntreeClientRpc(int state)
+        {
+            this.StartCoroutine(UntreeAndSwitch((State)state));
+        }
+
+        public IEnumerator UntreeAndSwitch(State state)
+        {
+            this.creatureAnimator.SetBool("UnTree", true);
+            yield return new WaitForSeconds(2.5416f);
+            this.creatureAnimator.SetBool("UnTree", false);
+            base.SwitchToBehaviourClientRpc((int)state);
+            this.inSpecialAnimation = false;
+            yield break;
         }
 
         public IEnumerator EatPlayer(ulong player)
