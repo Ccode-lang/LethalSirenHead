@@ -60,8 +60,12 @@ namespace LethalSirenHead.Enemy
                     if (LastState != State.TREEING)
                     {
                         this.creatureAnimator.SetBool("Tree", true);
-                        this.inSpecialAnimation = true;
+                        this.agent.speed = 0f;
+                        this.agent.angularSpeed = 0f;
                     }
+
+                    Plugin.Log.LogInfo(closePlayers);
+
                     if (closePlayers != null)
                     {
                         this.agent.speed = 12f;
@@ -144,15 +148,19 @@ namespace LethalSirenHead.Enemy
         [ClientRpc]
         public void UntreeClientRpc(int state)
         {
+            Plugin.Log.LogInfo("UnTreeing");
             this.StartCoroutine(UntreeAndSwitch((State)state));
         }
 
         public IEnumerator UntreeAndSwitch(State state)
         {
+            this.inSpecialAnimation = true;
             this.creatureAnimator.SetBool("UnTree", true);
+            this.creatureAnimator.SetBool("Tree", false);
             yield return new WaitForSeconds(2.5416f);
             this.creatureAnimator.SetBool("UnTree", false);
             base.SwitchToBehaviourClientRpc((int)state);
+            this.agent.angularSpeed = 100f;
             this.inSpecialAnimation = false;
             yield break;
         }
