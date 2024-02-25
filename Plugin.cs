@@ -66,7 +66,7 @@ namespace LethalSirenHead
         {
             string sAssemblyLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-            MainAssetBundle = AssetBundle.LoadFromFile(Path.Combine(sAssemblyLocation, "modassets"));
+            MainAssetBundle = AssetBundle.LoadFromFile(Path.Combine(sAssemblyLocation, "sirenheadassets"));
             if (MainAssetBundle == null)
             {
                 Plugin.Log.LogError("Failed to load custom assets.");
