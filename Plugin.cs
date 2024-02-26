@@ -19,7 +19,6 @@ namespace LethalSirenHead
 {
     [BepInPlugin(Plugin.MyGuid, Plugin.PluginName, Plugin.VersionString)]
     [BepInDependency(LethalLib.Plugin.ModGUID)]
-    [BepInDependency("ainavt.lc.lethalconfig")]
     public class Plugin : BaseUnityPlugin
     {
         private const string MyGuid = "Ccode.SirenHead";
