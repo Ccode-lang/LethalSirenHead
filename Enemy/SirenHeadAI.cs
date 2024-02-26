@@ -1,4 +1,5 @@
 ﻿using GameNetcodeStuff;
+using LethalLib;
 using LethalLib.Modules;
 using System;
 using System.Collections;
@@ -26,11 +27,28 @@ namespace LethalSirenHead.Enemy
 
         PlayerControllerB[] closePlayers;
 
+        string AIStart = Plugin.AIStart.Value;
+
+        float walkSpeed = Plugin.walkSpeed.Value;
+
+        float runSpeed = Plugin.runSpeed.Value;
+
         State LastState = State.WANDERING;
         public override void Start()
         {
             base.Start();
-            SwitchToBehaviourClientRpc((int)State.TREEING);
+            if (this.IsHost || this.IsServer)
+            {
+                ConfigSyncClientRpc(AIStart, walkSpeed, runSpeed);
+            }
+            if (AIStart == "tree")
+            {
+                SwitchToBehaviourClientRpc((int)State.TREEING);
+            }
+            else
+            {
+                // Do nothing
+            }
         }
         public override void DoAIInterval()
         {
@@ -45,14 +63,13 @@ namespace LethalSirenHead.Enemy
                 case (int)State.WANDERING:
                     if (!wander.inProgress)
                     {
-                        this.agent.speed = 3.5f;
+                        this.agent.speed = walkSpeed;
                         base.StartSearch(base.transform.position, wander);
                     }
 
                     if (players != null)
                     {
                         base.StopSearch(wander);
-                        this.agent.speed = 12f;
                         SwitchToBehaviourClientRpc((int)State.CHASING);
                     }
                     break;
@@ -64,11 +81,8 @@ namespace LethalSirenHead.Enemy
                         this.agent.angularSpeed = 0f;
                     }
 
-                    Plugin.Log.LogInfo(closePlayers);
-
                     if (closePlayers != null)
                     {
-                        this.agent.speed = 12f;
                         if (this.IsHost || this.IsServer)
                         {
                             UntreeClientRpc((int)State.CHASING);
@@ -80,6 +94,10 @@ namespace LethalSirenHead.Enemy
                     }
                     break;
                 case (int)State.CHASING:
+                    if (LastState != State.CHASING)
+                    {
+                        this.agent.speed = runSpeed;
+                    }
                     if (players == null)
                     {
                         SwitchToBehaviourClientRpc((int)(State.WANDERING));
@@ -128,6 +146,15 @@ namespace LethalSirenHead.Enemy
                 }
             }
         }
+
+        [ClientRpc]
+        public void ConfigSyncClientRpc(string AIStart, float walkSpeed, float runSpeed)
+        {
+            this.AIStart = AIStart;
+            this.walkSpeed = walkSpeed;
+            this.runSpeed = runSpeed;
+        }
+
         [ServerRpc(RequireOwnership = false)]
         public void RequestStartEatingPlayerServerRpc(ulong player)
         {

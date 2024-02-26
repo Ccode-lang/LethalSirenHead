@@ -19,6 +19,7 @@ namespace LethalSirenHead
 {
     [BepInPlugin(Plugin.MyGuid, Plugin.PluginName, Plugin.VersionString)]
     [BepInDependency(LethalLib.Plugin.ModGUID)]
+    [BepInDependency("ainavt.lc.lethalconfig")]
     public class Plugin : BaseUnityPlugin
     {
         private const string MyGuid = "Ccode.SirenHead";
@@ -30,8 +31,22 @@ namespace LethalSirenHead
         public static ManualLogSource Log;
 
         public static EnemyType SirenEnemy;
+        
+        public static ConfigEntry<string> AIStart;
+
+        public static ConfigEntry<float> walkSpeed;
+
+        public static ConfigEntry<float> runSpeed;
+
         public void Awake()
         {
+            AIStart = Config.Bind("General", "AI Start", "standard", "The AI option to use. (tree or standard)");
+            walkSpeed = Config.Bind("General", "Walk Speed", 3.5f, "Walking speed.");
+            runSpeed = Config.Bind("General", "Run Speed", 7.0f, "Running speed.");
+
+
+
+
             Assets.PopulateAssets();
             SirenEnemy = Assets.MainAssetBundle.LoadAsset<EnemyType>("SirenHead");
             var Node = Assets.MainAssetBundle.LoadAsset<TerminalNode>("SirenHeadTN");
