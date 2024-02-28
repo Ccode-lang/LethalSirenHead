@@ -41,14 +41,6 @@ namespace LethalSirenHead.Enemy
             {
                 ConfigSyncClientRpc(AIStart, walkSpeed, runSpeed);
             }
-            if (AIStart == "tree")
-            {
-                SwitchToBehaviourClientRpc((int)State.TREEING);
-            }
-            else
-            {
-                // Do nothing
-            }
         }
         public override void DoAIInterval()
         {
@@ -153,6 +145,14 @@ namespace LethalSirenHead.Enemy
             this.AIStart = AIStart;
             this.walkSpeed = walkSpeed;
             this.runSpeed = runSpeed;
+            if (AIStart == "tree")
+            {
+                SwitchToBehaviourClientRpc((int)State.TREEING);
+            }
+            else
+            {
+                // Do nothing
+            }
         }
 
         [ServerRpc(RequireOwnership = false)]

@@ -37,6 +37,8 @@ namespace LethalSirenHead
 
         public static ConfigEntry<float> runSpeed;
 
+        public static AudioClip spotSound;
+
         public void Awake()
         {
             AIStart = Config.Bind("General", "AI Start", "standard", "The AI option to use. (tree or standard)");
@@ -50,6 +52,7 @@ namespace LethalSirenHead
             SirenEnemy = Assets.MainAssetBundle.LoadAsset<EnemyType>("SirenHead");
             var Node = Assets.MainAssetBundle.LoadAsset<TerminalNode>("SirenHeadTN");
             var Keyword = Assets.MainAssetBundle.LoadAsset<TerminalKeyword>("SirenHeadKW");
+            spotSound = Assets.MainAssetBundle.LoadAsset<AudioClip>("sirenheadspot");
             NetworkPrefabs.RegisterNetworkPrefab(SirenEnemy.enemyPrefab);
             Harmony.PatchAll();
             Logger.LogInfo(PluginName + " " + VersionString + " " + "loaded.");
