@@ -62,6 +62,7 @@ namespace LethalSirenHead.Enemy
                     if (players != null)
                     {
                         base.StopSearch(wander);
+                        LastState = State.WANDERING;
                         SwitchToBehaviourClientRpc((int)State.CHASING);
                     }
                     break;
@@ -75,6 +76,7 @@ namespace LethalSirenHead.Enemy
 
                     if (closePlayers != null)
                     {
+                        LastState = State.TREEING;
                         if (this.IsHost || this.IsServer)
                         {
                             UntreeClientRpc((int)State.CHASING);
@@ -93,13 +95,13 @@ namespace LethalSirenHead.Enemy
                     }
                     if (players == null)
                     {
+                        LastState = State.CHASING;
                         SwitchToBehaviourClientRpc((int)(State.WANDERING));
                         return;
                     }
                     SetDestinationToPosition(players[0].transform.position);
                     break;
             }
-            LastState = (State)currentBehaviourStateIndex;
         }
 
         public void LateUpdate()
@@ -142,7 +144,7 @@ namespace LethalSirenHead.Enemy
 
         public void PlayFootstep()
         {
-            this.creatureVoice.PlayOneShot(Plugin.stepSound);
+            this.creatureVoice.PlayOneShot(Plugin.stepSound, 0.4f);
         }
 
         [ClientRpc]
