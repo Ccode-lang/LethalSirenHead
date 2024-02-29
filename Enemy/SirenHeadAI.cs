@@ -139,6 +139,11 @@ namespace LethalSirenHead.Enemy
             }
         }
 
+        public void PlayFootstep()
+        {
+            this.creatureVoice.PlayOneShot(Plugin.stepSound);
+        }
+
         [ClientRpc]
         public void ConfigSyncClientRpc(string AIStart, float walkSpeed, float runSpeed)
         {
