@@ -41,14 +41,6 @@ namespace LethalSirenHead.Enemy
             {
                 ConfigSyncClientRpc(AIStart, walkSpeed, runSpeed);
             }
-            if (AIStart == "tree")
-            {
-                SwitchToBehaviourClientRpc((int)State.TREEING);
-            }
-            else
-            {
-                // Do nothing
-            }
         }
         public override void DoAIInterval()
         {
@@ -70,6 +62,7 @@ namespace LethalSirenHead.Enemy
                     if (players != null)
                     {
                         base.StopSearch(wander);
+                        LastState = State.WANDERING;
                         SwitchToBehaviourClientRpc((int)State.CHASING);
                     }
                     break;
@@ -83,6 +76,7 @@ namespace LethalSirenHead.Enemy
 
                     if (closePlayers != null)
                     {
+                        LastState = State.TREEING;
                         if (this.IsHost || this.IsServer)
                         {
                             UntreeClientRpc((int)State.CHASING);
@@ -97,16 +91,17 @@ namespace LethalSirenHead.Enemy
                     if (LastState != State.CHASING)
                     {
                         this.agent.speed = runSpeed;
+                        this.creatureVoice.PlayOneShot(Plugin.spotSound);
                     }
                     if (players == null)
                     {
+                        LastState = State.CHASING;
                         SwitchToBehaviourClientRpc((int)(State.WANDERING));
                         return;
                     }
                     SetDestinationToPosition(players[0].transform.position);
                     break;
             }
-            LastState = (State)currentBehaviourStateIndex;
         }
 
         public void LateUpdate()
@@ -147,12 +142,25 @@ namespace LethalSirenHead.Enemy
             }
         }
 
+        public void PlayFootstep()
+        {
+            this.creatureVoice.PlayOneShot(Plugin.stepSound, 0.4f);
+        }
+
         [ClientRpc]
         public void ConfigSyncClientRpc(string AIStart, float walkSpeed, float runSpeed)
         {
             this.AIStart = AIStart;
             this.walkSpeed = walkSpeed;
             this.runSpeed = runSpeed;
+            if (AIStart == "tree")
+            {
+                SwitchToBehaviourClientRpc((int)State.TREEING);
+            }
+            else
+            {
+                // Do nothing
+            }
         }
 
         [ServerRpc(RequireOwnership = false)]
