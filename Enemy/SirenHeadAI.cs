@@ -89,6 +89,7 @@ namespace LethalSirenHead.Enemy
                     if (LastState != State.CHASING)
                     {
                         this.agent.speed = runSpeed;
+                        this.creatureVoice.PlayOneShot(Plugin.spotSound);
                     }
                     if (players == null)
                     {
