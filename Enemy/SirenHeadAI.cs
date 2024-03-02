@@ -104,6 +104,29 @@ namespace LethalSirenHead.Enemy
             }
         }
 
+        public override void Update()
+        {
+            base.Update();
+            if (GameNetworkManager.Instance.localPlayerController == null)
+            {
+                return;
+            }
+            if (currentBehaviourStateIndex == (int)State.CHASING && players[0] == GameNetworkManager.Instance.localPlayerController)
+            {
+                GameNetworkManager.Instance.localPlayerController.IncreaseFearLevelOverTime(1.4f, 1f);
+                return;
+            }
+            if (base.HasLineOfSightToPosition(GameNetworkManager.Instance.localPlayerController.gameplayCamera.transform.position, 45f, 70, -1f))
+            {
+                if (Vector3.Distance(base.transform.position, GameNetworkManager.Instance.localPlayerController.transform.position) < 15f)
+                {
+                    GameNetworkManager.Instance.localPlayerController.JumpToFearLevel(0.7f, true);
+                    return;
+                }
+                GameNetworkManager.Instance.localPlayerController.JumpToFearLevel(0.4f, true);
+            }
+        }
+
         public void LateUpdate()
         {
             if (this.inSpecialAnimationWithPlayer != null)
