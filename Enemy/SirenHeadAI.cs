@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace LethalSirenHead.Enemy
 {
@@ -33,14 +34,62 @@ namespace LethalSirenHead.Enemy
 
         float runSpeed = Plugin.runSpeed.Value;
 
-        State LastState = State.WANDERING;
+        bool Ready = false;
+
         public override void Start()
         {
             base.Start();
+            int rand = Random.Range(0, 2);
+            string configValue = Plugin.AIStart.Value;
+
+            if (configValue == "random")
+            {
+                if (rand == 0)
+                {
+                    AIStart = "tree";
+                }
+                else
+                {
+                    AIStart = "standard";
+                }
+            }
+            else if (configValue == "tree")
+            {
+                AIStart = "tree";
+            }
+            Ready = true;
             if (this.IsHost || this.IsServer)
             {
                 ConfigSyncClientRpc(AIStart, walkSpeed, runSpeed);
             }
+        }
+
+        [ClientRpc]
+        public void maketreeClientRpc()
+        {
+            if (this.IsHost || this.IsServer)
+            {
+                this.creatureAnimator.SetBool("Tree", true);
+                this.agent.speed = 0f;
+                this.agent.angularSpeed = 0f;
+                SwitchToBehaviourClientRpc((int)State.TREEING);
+            }
+        }
+
+        [ClientRpc]
+        public void makewanderClientRpc()
+        {
+            this.agent.speed = walkSpeed;
+            base.StartSearch(base.transform.position, wander);
+            SwitchToBehaviourClientRpc((int)State.WANDERING);
+        }
+
+        [ClientRpc]
+        public void makechaseClientRpc()
+        {
+            this.agent.speed = runSpeed;
+            this.creatureVoice.PlayOneShot(Plugin.spotSound);
+            SwitchToBehaviourClientRpc((int)State.CHASING);
         }
         public override void DoAIInterval()
         {
@@ -53,50 +102,29 @@ namespace LethalSirenHead.Enemy
             switch (currentBehaviourStateIndex)
             {
                 case (int)State.WANDERING:
-                    if (!wander.inProgress)
-                    {
-                        this.agent.speed = walkSpeed;
-                        base.StartSearch(base.transform.position, wander);
-                    }
-
                     if (players != null)
                     {
                         base.StopSearch(wander);
-                        LastState = State.WANDERING;
-                        SwitchToBehaviourClientRpc((int)State.CHASING);
+                        makechaseClientRpc();
                     }
                     break;
                 case (int)State.TREEING:
-                    if (LastState != State.TREEING)
-                    {
-                        this.creatureAnimator.SetBool("Tree", true);
-                        this.agent.speed = 0f;
-                        this.agent.angularSpeed = 0f;
-                    }
-
                     if (closePlayers != null)
                     {
-                        LastState = State.TREEING;
                         if (this.IsHost || this.IsServer)
                         {
-                            UntreeClientRpc((int)State.CHASING);
+                            UntreeClientRpc();
                         }
                         else
                         {
-                            RequestUntreeServerRpc((int)State.CHASING);
+                            RequestUntreeServerRpc();
                         }
                     }
                     break;
                 case (int)State.CHASING:
-                    if (LastState != State.CHASING)
-                    {
-                        this.agent.speed = runSpeed;
-                        this.creatureVoice.PlayOneShot(Plugin.spotSound);
-                    }
                     if (players == null)
                     {
-                        LastState = State.CHASING;
-                        SwitchToBehaviourClientRpc((int)(State.WANDERING));
+                        makewanderClientRpc();
                         return;
                     }
                     SetDestinationToPosition(players[0].transform.position);
@@ -178,11 +206,11 @@ namespace LethalSirenHead.Enemy
             this.runSpeed = runSpeed;
             if (AIStart == "tree")
             {
-                SwitchToBehaviourClientRpc((int)State.TREEING);
+                maketreeClientRpc();
             }
             else
             {
-                // Do nothing
+                makewanderClientRpc();
             }
         }
 
@@ -199,25 +227,31 @@ namespace LethalSirenHead.Enemy
         }
 
         [ServerRpc(RequireOwnership = false)]
-        public void RequestUntreeServerRpc(int state)
+        public void RequestUntreeServerRpc()
         {
-            UntreeClientRpc(state);
+            UntreeClientRpc();
         }
         [ClientRpc]
-        public void UntreeClientRpc(int state)
+        public void UntreeClientRpc()
         {
             Plugin.Log.LogInfo("UnTreeing");
-            this.StartCoroutine(UntreeAndSwitch((State)state));
+            this.StartCoroutine(UntreeAndSwitch());
         }
 
-        public IEnumerator UntreeAndSwitch(State state)
+        public IEnumerator UntreeAndSwitch()
         {
             this.inSpecialAnimation = true;
-            this.creatureAnimator.SetBool("UnTree", true);
-            this.creatureAnimator.SetBool("Tree", false);
+            if (this.IsHost || this.IsServer)
+            {
+                this.creatureAnimator.SetBool("UnTree", true);
+                this.creatureAnimator.SetBool("Tree", false);
+            }
             yield return new WaitForSeconds(2.5416f);
-            this.creatureAnimator.SetBool("UnTree", false);
-            base.SwitchToBehaviourClientRpc((int)state);
+            if (this.IsHost || this.IsServer)
+            {
+                this.creatureAnimator.SetBool("UnTree", false);
+            }
+            makechaseClientRpc();
             this.agent.angularSpeed = 100f;
             this.inSpecialAnimation = false;
             yield break;
@@ -226,15 +260,21 @@ namespace LethalSirenHead.Enemy
         public IEnumerator EatPlayer(ulong player)
         {
             PlayerControllerB PlayerObject = StartOfRound.Instance.allPlayerScripts[player];
-            this.creatureAnimator.SetBool("Eating", true);
+            if (this.IsHost || this.IsServer)
+            {
+                this.creatureAnimator.SetBool("Eating", true);
+            }
             this.inSpecialAnimation = true;
             PlayerObject.isInElevator = false;
             PlayerObject.isInHangarShipRoom = false;
             yield return new WaitForSeconds(7.29f);
             this.inSpecialAnimation = false;
             PlayerObject.KillPlayer(Vector3.zero, false, CauseOfDeath.Crushing, 0);
-            base.SwitchToBehaviourState((int)State.WANDERING);
-            this.creatureAnimator.SetBool("Eating", false);
+            makewanderClientRpc();
+            if (this.IsHost || this.IsServer)
+            {
+                this.creatureAnimator.SetBool("Eating", false);
+            }
             this.inSpecialAnimationWithPlayer = null;
             PlayerObject.inSpecialInteractAnimation = false;
             PlayerObject.inAnimationWithEnemy = null;

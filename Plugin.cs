@@ -43,7 +43,7 @@ namespace LethalSirenHead
 
         public void Awake()
         {
-            AIStart = Config.Bind("General", "AI Start", "standard", "The AI option to use. (tree or standard)");
+            AIStart = Config.Bind("General", "AI Start", "random", "The AI option to use. (tree, standard, or random)");
             walkSpeed = Config.Bind("General", "Walk Speed", 3.5f, "Walking speed.");
             runSpeed = Config.Bind("General", "Run Speed", 7.0f, "Running speed.");
 
