@@ -34,7 +34,9 @@ namespace LethalSirenHead.Enemy
 
         float runSpeed = Plugin.runSpeed.Value;
 
-        bool Ready = false;
+        float walkieTimer = 0f;
+
+        float walkieInterval = 0f;
 
         public override void Start()
         {
@@ -57,11 +59,34 @@ namespace LethalSirenHead.Enemy
             {
                 AIStart = "tree";
             }
-            Ready = true;
             if (this.IsHost || this.IsServer)
             {
+                walkieInterval = Random.Range(60f, 90f);
                 ConfigSyncClientRpc(AIStart, walkSpeed, runSpeed);
             }
+        }
+
+        public void PlaySound(AudioClip clip, float volume = 1f)
+        {
+            this.creatureVoice.PlayOneShot(clip);
+            WalkieTalkie.TransmitOneShotAudio(this.creatureVoice, clip);
+        }
+
+        public void BroadcastOnWalkie(AudioClip clip, float volume = 1f)
+        {
+            for (int i = 0; i < WalkieTalkie.allWalkieTalkies.Count; i++)
+            {
+                if (WalkieTalkie.allWalkieTalkies[i].isBeingUsed)
+                {
+                    WalkieTalkie.allWalkieTalkies[i].target.PlayOneShot(clip, volume);
+                }
+            }
+        }
+
+        [ClientRpc]
+        public void walkieChatterClientRpc()
+        {
+            BroadcastOnWalkie(Plugin.walkieChatter);
         }
 
         [ClientRpc]
@@ -88,7 +113,7 @@ namespace LethalSirenHead.Enemy
         public void makechaseClientRpc()
         {
             this.agent.speed = runSpeed;
-            this.creatureVoice.PlayOneShot(Plugin.spotSound);
+            PlaySound(Plugin.spotSound);
             SwitchToBehaviourClientRpc((int)State.CHASING);
         }
         public override void DoAIInterval()
@@ -135,6 +160,18 @@ namespace LethalSirenHead.Enemy
         public override void Update()
         {
             base.Update();
+            if (IsServer || IsHost)
+            {
+                // Plugin.Log.LogInfo($"{walkieTimer} : {walkieInterval}");
+                walkieTimer += Time.deltaTime;
+                if (walkieTimer >= walkieInterval)
+                {
+                    walkieChatterClientRpc();
+                    walkieTimer -= walkieInterval;
+                    walkieInterval = Random.Range(60f, 90f);
+                }
+            }
+
             if (GameNetworkManager.Instance.localPlayerController == null)
             {
                 return;
@@ -195,7 +232,7 @@ namespace LethalSirenHead.Enemy
 
         public void PlayFootstep()
         {
-            this.creatureVoice.PlayOneShot(Plugin.stepSound, 0.4f);
+            PlaySound(Plugin.stepSound, 0.4f);
         }
 
         [ClientRpc]

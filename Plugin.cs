@@ -41,6 +41,8 @@ namespace LethalSirenHead
 
         public static AudioClip stepSound;
 
+        public static AudioClip walkieChatter;
+
         public void Awake()
         {
             AIStart = Config.Bind("General", "AI Start", "random", "The AI option to use. (tree, standard, or random)");
@@ -56,6 +58,7 @@ namespace LethalSirenHead
             var Keyword = Assets.MainAssetBundle.LoadAsset<TerminalKeyword>("SirenHeadKW");
             spotSound = Assets.MainAssetBundle.LoadAsset<AudioClip>("sirenheadspot");
             stepSound = Assets.MainAssetBundle.LoadAsset<AudioClip>("Sirenfoot1");
+            walkieChatter = Assets.MainAssetBundle.LoadAsset<AudioClip>("Sirenchatter");
             NetworkPrefabs.RegisterNetworkPrefab(SirenEnemy.enemyPrefab);
             Harmony.PatchAll();
             Logger.LogInfo(PluginName + " " + VersionString + " " + "loaded.");
