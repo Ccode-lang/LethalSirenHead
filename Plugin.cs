@@ -37,6 +37,8 @@ namespace LethalSirenHead
 
         public static ConfigEntry<float> runSpeed;
 
+        public static ConfigEntry<string> Levels;
+
         public static AudioClip spotSound;
 
         public static AudioClip stepSound;
@@ -48,7 +50,7 @@ namespace LethalSirenHead
             AIStart = Config.Bind("General", "AI Start", "random", "The AI option to use. (tree, standard, or random)");
             walkSpeed = Config.Bind("General", "Walk Speed", 3.5f, "Walking speed.");
             runSpeed = Config.Bind("General", "Run Speed", 7.0f, "Running speed.");
-
+            Levels = Config.Bind("General", "Levels", "Vow;March", "Moons that it will spawn on.");
 
 
 
@@ -62,7 +64,7 @@ namespace LethalSirenHead
             NetworkPrefabs.RegisterNetworkPrefab(SirenEnemy.enemyPrefab);
             Harmony.PatchAll();
             Logger.LogInfo(PluginName + " " + VersionString + " " + "loaded.");
-            RegisterEnemy(SirenEnemy, 100, LevelTypes.VowLevel, SpawnType.Outside, Node, Keyword);
+            RegisterEnemy(SirenEnemy, 100, SolveLevels(Levels), SpawnType.Outside, Node, Keyword);
             Log = Logger;
 
             // netcode stuff
@@ -79,6 +81,52 @@ namespace LethalSirenHead
                     }
                 }
             }
+        }
+
+        LevelTypes SolveLevels(ConfigEntry<string> config)
+        {
+            LevelTypes Levels = 0;
+
+            string[] configStr = config.Value.Split(';');
+
+            for (int i = 0; i < configStr.Length; i++)
+            {
+                if (configStr[i] == "Vow")
+                {
+                    Levels = Levels | LevelTypes.VowLevel;
+                }
+                else if (configStr[i] == "Experimentation")
+                {
+                    Levels = Levels | LevelTypes.ExperimentationLevel;
+                }
+                else if (configStr[i] == "Assurance")
+                {
+                    Levels = Levels | LevelTypes.AssuranceLevel;
+                }
+                else if (configStr[i] == "Offense")
+                {
+                    Levels = Levels | LevelTypes.OffenseLevel;
+                } else if (configStr[i] == "March")
+                {
+                    Levels = Levels | LevelTypes.MarchLevel;
+                }
+                else if (configStr[i] == "Rend")
+                {
+                    Levels = Levels | LevelTypes.RendLevel;
+                }
+                else if (configStr[i] == "Dine")
+                {
+                    Levels = Levels | LevelTypes.DineLevel;
+                }
+                else if (configStr[i] == "Titan")
+                {
+                    Levels = Levels | LevelTypes.TitanLevel;
+                }
+            }
+
+            Logger.LogInfo($"Levels: {((LevelTypes)(int)Levels).ToString()}");
+
+            return (LevelTypes)(int)Levels;
         }
     }
 
