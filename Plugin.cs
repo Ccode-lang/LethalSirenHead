@@ -122,6 +122,10 @@ namespace LethalSirenHead
                 {
                     Levels = Levels | LevelTypes.TitanLevel;
                 }
+                else if (configStr[i] == "All")
+                {
+                    Levels = Levels | LevelTypes.All;
+                }
             }
 
             Logger.LogInfo($"Levels: {((LevelTypes)(int)Levels).ToString()}");
