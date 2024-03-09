@@ -128,9 +128,9 @@ namespace LethalSirenHead
                 }
             }
 
-            Logger.LogInfo($"Levels: {((LevelTypes)(int)Levels).ToString()}");
+            Logger.LogInfo($"Levels: {Levels.ToString()}");
 
-            return (LevelTypes)(int)Levels;
+            return Levels;
         }
     }
 

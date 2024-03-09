@@ -86,7 +86,7 @@ namespace LethalSirenHead.Enemy
         [ClientRpc]
         public void walkieChatterClientRpc()
         {
-            BroadcastOnWalkie(Plugin.walkieChatter);
+            BroadcastOnWalkie(Plugin.walkieChatter, 0.5f);
         }
 
         [ClientRpc]
