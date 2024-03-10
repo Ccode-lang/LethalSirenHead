@@ -14,7 +14,7 @@ namespace LethalSirenHead
             List<AudioClip> clips = new List<AudioClip>();
             foreach (string name in bundle.GetAllAssetNames())
             {
-                if (name.StartsWith(prefix))
+                if (name.Contains(prefix))
                 {
                     clips.Add(bundle.LoadAsset<AudioClip>(name));
                 }

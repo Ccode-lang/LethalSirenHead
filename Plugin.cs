@@ -63,6 +63,9 @@ namespace LethalSirenHead
             spotSound = Utils.LoadSounds(Assets.MainAssetBundle, "sirenheadspot");
             stepSound = Utils.LoadSounds(Assets.MainAssetBundle, "Sirenfoot");
             walkieChatter = Utils.LoadSounds(Assets.MainAssetBundle, "Sirenchatter");
+            Logger.LogInfo(spotSound);
+            Logger.LogInfo(stepSound);
+            Logger.LogInfo(walkieChatter);
 
             NetworkPrefabs.RegisterNetworkPrefab(SirenEnemy.enemyPrefab);
             Harmony.PatchAll();
