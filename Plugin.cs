@@ -14,6 +14,7 @@ using static LethalLib.Modules.Enemies;
 using LethalSirenHead.Enemy;
 using System.IO;
 using System.Reflection;
+using System.Collections;
 
 namespace LethalSirenHead
 {
@@ -61,11 +62,20 @@ namespace LethalSirenHead
             var Keyword = Assets.MainAssetBundle.LoadAsset<TerminalKeyword>("SirenHeadKW");
 
             spotSound = Utils.LoadSounds(Assets.MainAssetBundle, "sirenheadspot");
-            stepSound = Utils.LoadSounds(Assets.MainAssetBundle, "Sirenfoot");
-            walkieChatter = Utils.LoadSounds(Assets.MainAssetBundle, "Sirenchatter");
-            Logger.LogInfo(spotSound);
-            Logger.LogInfo(stepSound);
-            Logger.LogInfo(walkieChatter);
+            stepSound = Utils.LoadSounds(Assets.MainAssetBundle, "sirenfoot");
+            walkieChatter = Utils.LoadSounds(Assets.MainAssetBundle, "sirenchatter");
+            foreach (var x in spotSound)
+            {
+                Debug.Log(x.ToString());
+            }
+            foreach (var x in stepSound)
+            {
+                Debug.Log(x.ToString());
+            }
+            foreach (var x in walkieChatter)
+            {
+                Debug.Log(x.ToString());
+            }
 
             NetworkPrefabs.RegisterNetworkPrefab(SirenEnemy.enemyPrefab);
             Harmony.PatchAll();
