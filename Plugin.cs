@@ -39,11 +39,11 @@ namespace LethalSirenHead
 
         public static ConfigEntry<string> Levels;
 
-        public static AudioClip spotSound;
+        public static AudioClip[] spotSound;
 
-        public static AudioClip stepSound;
+        public static AudioClip[] stepSound;
 
-        public static AudioClip walkieChatter;
+        public static AudioClip[] walkieChatter;
 
         public void Awake()
         {
@@ -55,12 +55,15 @@ namespace LethalSirenHead
 
 
             Assets.PopulateAssets();
+
             SirenEnemy = Assets.MainAssetBundle.LoadAsset<EnemyType>("SirenHead");
             var Node = Assets.MainAssetBundle.LoadAsset<TerminalNode>("SirenHeadTN");
             var Keyword = Assets.MainAssetBundle.LoadAsset<TerminalKeyword>("SirenHeadKW");
-            spotSound = Assets.MainAssetBundle.LoadAsset<AudioClip>("sirenheadspot");
-            stepSound = Assets.MainAssetBundle.LoadAsset<AudioClip>("Sirenfoot1");
-            walkieChatter = Assets.MainAssetBundle.LoadAsset<AudioClip>("Sirenchatter");
+
+            spotSound = Utils.LoadSounds(Assets.MainAssetBundle, "sirenheadspot");
+            stepSound = Utils.LoadSounds(Assets.MainAssetBundle, "Sirenfoot");
+            walkieChatter = Utils.LoadSounds(Assets.MainAssetBundle, "Sirenchatter");
+
             NetworkPrefabs.RegisterNetworkPrefab(SirenEnemy.enemyPrefab);
             Harmony.PatchAll();
             Logger.LogInfo(PluginName + " " + VersionString + " " + "loaded.");
