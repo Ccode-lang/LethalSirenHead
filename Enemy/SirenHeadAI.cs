@@ -84,9 +84,22 @@ namespace LethalSirenHead.Enemy
         }
 
         [ClientRpc]
-        public void walkieChatterClientRpc()
+        public void playSpotOneshotClientRpc(int index)
         {
-            BroadcastOnWalkie(Plugin.walkieChatter, 0.5f);
+            PlaySound(Plugin.spotSound[index]);
+        }
+
+
+        [ClientRpc]
+        public void playWalkOneshotClientRpc(int index)
+        {
+            PlaySound(Plugin.stepSound[index], 0.4f);
+        }
+
+        [ClientRpc]
+        public void walkieChatterClientRpc(int index)
+        {
+            BroadcastOnWalkie(Plugin.walkieChatter[index], 0.5f);
         }
 
         [ClientRpc]
@@ -113,7 +126,10 @@ namespace LethalSirenHead.Enemy
         public void makechaseClientRpc()
         {
             this.agent.speed = runSpeed;
-            PlaySound(Plugin.spotSound);
+            if (this.IsHost || this.IsServer)
+            {
+                playSpotOneshotClientRpc(Random.Range(0, Plugin.spotSound.Length));
+            }
             SwitchToBehaviourClientRpc((int)State.CHASING);
         }
         public override void DoAIInterval()
@@ -166,7 +182,7 @@ namespace LethalSirenHead.Enemy
                 walkieTimer += Time.deltaTime;
                 if (walkieTimer >= walkieInterval)
                 {
-                    walkieChatterClientRpc();
+                    walkieChatterClientRpc(Random.Range(0, Plugin.walkieChatter.Length));
                     walkieTimer -= walkieInterval;
                     walkieInterval = Random.Range(60f, 90f);
                 }
@@ -232,7 +248,10 @@ namespace LethalSirenHead.Enemy
 
         public void PlayFootstep()
         {
-            PlaySound(Plugin.stepSound, 0.4f);
+            if (this.IsHost || this.IsServer)
+            {
+                playWalkOneshotClientRpc(Random.Range(0, Plugin.stepSound.Length));
+            }
         }
 
         [ClientRpc]

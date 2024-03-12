@@ -14,6 +14,7 @@ using static LethalLib.Modules.Enemies;
 using LethalSirenHead.Enemy;
 using System.IO;
 using System.Reflection;
+using System.Collections;
 
 namespace LethalSirenHead
 {
@@ -39,11 +40,11 @@ namespace LethalSirenHead
 
         public static ConfigEntry<string> Levels;
 
-        public static AudioClip spotSound;
+        public static AudioClip[] spotSound;
 
-        public static AudioClip stepSound;
+        public static AudioClip[] stepSound;
 
-        public static AudioClip walkieChatter;
+        public static AudioClip[] walkieChatter;
 
         public void Awake()
         {
@@ -55,12 +56,27 @@ namespace LethalSirenHead
 
 
             Assets.PopulateAssets();
+
             SirenEnemy = Assets.MainAssetBundle.LoadAsset<EnemyType>("SirenHead");
             var Node = Assets.MainAssetBundle.LoadAsset<TerminalNode>("SirenHeadTN");
             var Keyword = Assets.MainAssetBundle.LoadAsset<TerminalKeyword>("SirenHeadKW");
-            spotSound = Assets.MainAssetBundle.LoadAsset<AudioClip>("sirenheadspot");
-            stepSound = Assets.MainAssetBundle.LoadAsset<AudioClip>("Sirenfoot1");
-            walkieChatter = Assets.MainAssetBundle.LoadAsset<AudioClip>("Sirenchatter");
+
+            spotSound = Utils.LoadSounds(Assets.MainAssetBundle, "sirenheadspot");
+            stepSound = Utils.LoadSounds(Assets.MainAssetBundle, "sirenfoot");
+            walkieChatter = Utils.LoadSounds(Assets.MainAssetBundle, "sirenchatter");
+            foreach (var x in spotSound)
+            {
+                Debug.Log(x.ToString());
+            }
+            foreach (var x in stepSound)
+            {
+                Debug.Log(x.ToString());
+            }
+            foreach (var x in walkieChatter)
+            {
+                Debug.Log(x.ToString());
+            }
+
             NetworkPrefabs.RegisterNetworkPrefab(SirenEnemy.enemyPrefab);
             Harmony.PatchAll();
             Logger.LogInfo(PluginName + " " + VersionString + " " + "loaded.");
