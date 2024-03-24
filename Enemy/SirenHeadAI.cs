@@ -126,19 +126,16 @@ namespace LethalSirenHead.Enemy
         public void makechaseClientRpc()
         {
             this.agent.speed = runSpeed;
-            if (this.IsHost || this.IsServer)
-            {
-                playSpotOneshotClientRpc(Random.Range(0, Plugin.spotSound.Length));
-            }
+            playSpotOneshotClientRpc(Random.Range(0, Plugin.spotSound.Length));
             SwitchToBehaviourClientRpc((int)State.CHASING);
         }
         public override void DoAIInterval()
         {
             base.DoAIInterval();
             // Make sure to set the eye in the prefab or this won't work.
-            players = base.GetAllPlayersInLineOfSight(50f, 70, this.eye, 3f, StartOfRound.Instance.collidersRoomDefaultAndFoliage);
+            players = base.GetAllPlayersInLineOfSight(50f, 70, this.eye, 15f, StartOfRound.Instance.collidersRoomDefaultAndFoliage);
 
-            closePlayers = base.GetAllPlayersInLineOfSight(50f, 20, this.eye, 3f, StartOfRound.Instance.collidersRoomDefaultAndFoliage);
+            closePlayers = base.GetAllPlayersInLineOfSight(50f, 20, this.eye, 10f, StartOfRound.Instance.collidersRoomDefaultAndFoliage);
 
             switch (currentBehaviourStateIndex)
             {
@@ -192,10 +189,13 @@ namespace LethalSirenHead.Enemy
             {
                 return;
             }
-            if (currentBehaviourStateIndex == (int)State.CHASING && players[0] == GameNetworkManager.Instance.localPlayerController)
+            if (players != null)
             {
-                GameNetworkManager.Instance.localPlayerController.IncreaseFearLevelOverTime(1.4f, 1f);
-                return;
+                if (currentBehaviourStateIndex == (int)State.CHASING && players[0] == GameNetworkManager.Instance.localPlayerController)
+                {
+                    GameNetworkManager.Instance.localPlayerController.IncreaseFearLevelOverTime(1.4f, 1f);
+                    return;
+                }
             }
             if (base.HasLineOfSightToPosition(GameNetworkManager.Instance.localPlayerController.gameplayCamera.transform.position, 45f, 70, -1f))
             {
