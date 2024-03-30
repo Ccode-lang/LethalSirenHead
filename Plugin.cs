@@ -133,7 +133,7 @@ namespace LethalSirenHead
                 else
                 {
                     spawnRateByCustomLevelType[levelDef[0]] = spawnrate;
-                    Logger.LogInfo($"Registered spawn rate for custom level type {name} to {spawnrate}");
+                    Logger.LogInfo($"Registered spawn rate for custom level type {levelDef[0]} to {spawnrate}");
                 }
             }
 
