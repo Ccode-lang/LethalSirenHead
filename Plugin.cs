@@ -15,6 +15,7 @@ using LethalSirenHead.Enemy;
 using System.IO;
 using System.Reflection;
 using System.Collections;
+using static UnityEngine.EventSystems.EventTrigger;
 
 namespace LethalSirenHead
 {
@@ -51,7 +52,7 @@ namespace LethalSirenHead
             AIStart = Config.Bind("General", "AI Start", "random", "The AI option to use. (tree, standard, or random)");
             walkSpeed = Config.Bind("General", "Walk Speed", 3.5f, "Walking speed.");
             runSpeed = Config.Bind("General", "Run Speed", 7.0f, "Running speed.");
-            Levels = Config.Bind("General", "Levels", "Vow;March", "Moons that it will spawn on.");
+            Levels = Config.Bind("General", "Levels", "VowLevel:100;MarchLevel:100", "Moons that it will spawn on. Format: \"MoonName:Weight;MoonName2:Weight2\". All will work as a moon name");
 
 
 
@@ -77,10 +78,12 @@ namespace LethalSirenHead
                 Debug.Log(x.ToString());
             }
 
+            (Dictionary<LevelTypes, int> spawnRateByLevelType, Dictionary<string, int> spawnRateByCustomLevelType) = SolveLevels(Levels.Value);
+
             NetworkPrefabs.RegisterNetworkPrefab(SirenEnemy.enemyPrefab);
             Harmony.PatchAll();
             Logger.LogInfo(PluginName + " " + VersionString + " " + "loaded.");
-            RegisterEnemy(SirenEnemy, 100, SolveLevels(Levels), SpawnType.Outside, Node, Keyword);
+            RegisterEnemy(SirenEnemy, spawnRateByLevelType, spawnRateByCustomLevelType, Node, Keyword);
             Log = Logger;
 
             // netcode stuff
@@ -99,54 +102,43 @@ namespace LethalSirenHead
             }
         }
 
-        LevelTypes SolveLevels(ConfigEntry<string> config)
+        (Dictionary<LevelTypes, int> spawnRateByLevelType, Dictionary<string, int> spawnRateByCustomLevelType) SolveLevels(string config)
         {
-            LevelTypes Levels = 0;
+            Dictionary<LevelTypes, int> spawnRateByLevelType = new Dictionary<LevelTypes, int>();
+            Dictionary<string, int> spawnRateByCustomLevelType = new Dictionary<string, int>();
 
-            string[] configStr = config.Value.Split(';');
+            string[] configSplit = config.Split(';');
 
-            for (int i = 0; i < configStr.Length; i++)
+            foreach (string entry in configSplit)
             {
-                if (configStr[i] == "Vow")
+                string[] levelDef = entry.Trim().Split(':');
+
+                if (levelDef.Length != 2)
                 {
-                    Levels = Levels | LevelTypes.VowLevel;
+                    continue;
                 }
-                else if (configStr[i] == "Experimentation")
+
+                int spawnrate = 0;
+
+                if (!int.TryParse(levelDef[1], out spawnrate))
                 {
-                    Levels = Levels | LevelTypes.ExperimentationLevel;
+                    continue;
                 }
-                else if (configStr[i] == "Assurance")
+
+                if (Enum.TryParse<LevelTypes>(levelDef[0], true, out LevelTypes levelType))
                 {
-                    Levels = Levels | LevelTypes.AssuranceLevel;
+                    spawnRateByLevelType[levelType] = spawnrate;
+                    Logger.LogInfo($"Registered spawn rate for level type {levelType} to {spawnrate}");
                 }
-                else if (configStr[i] == "Offense")
+                else
                 {
-                    Levels = Levels | LevelTypes.OffenseLevel;
-                } else if (configStr[i] == "March")
-                {
-                    Levels = Levels | LevelTypes.MarchLevel;
-                }
-                else if (configStr[i] == "Rend")
-                {
-                    Levels = Levels | LevelTypes.RendLevel;
-                }
-                else if (configStr[i] == "Dine")
-                {
-                    Levels = Levels | LevelTypes.DineLevel;
-                }
-                else if (configStr[i] == "Titan")
-                {
-                    Levels = Levels | LevelTypes.TitanLevel;
-                }
-                else if (configStr[i] == "All")
-                {
-                    Levels = Levels | LevelTypes.All;
+                    spawnRateByCustomLevelType[levelDef[0]] = spawnrate;
+                    Logger.LogInfo($"Registered spawn rate for custom level type {levelDef[0]} to {spawnrate}");
                 }
             }
 
-            Logger.LogInfo($"Levels: {Levels.ToString()}");
 
-            return Levels;
+            return (spawnRateByLevelType, spawnRateByCustomLevelType);
         }
     }
 
