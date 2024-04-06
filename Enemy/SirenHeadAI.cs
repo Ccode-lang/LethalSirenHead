@@ -66,6 +66,92 @@ namespace LethalSirenHead.Enemy
             }
         }
 
+        // Borrowing from Zeekerss for v49 compatability
+        public PlayerControllerB[] CheckLineOfSightForPositionCompat(float width = 45f, int range = 60, Transform eyeObject = null, float proximityCheck = -1f, int layerMask = -1)
+        {
+            if (layerMask == -1)
+            {
+                layerMask = StartOfRound.Instance.collidersAndRoomMaskAndDefault;
+            }
+            if (eyeObject == null)
+            {
+                eyeObject = this.eye;
+            }
+            if (this.isOutside && !this.enemyType.canSeeThroughFog && TimeOfDay.Instance.currentLevelWeather == LevelWeatherType.Foggy)
+            {
+                range = Mathf.Clamp(range, 0, 30);
+            }
+            List<PlayerControllerB> list = new List<PlayerControllerB>(4);
+            for (int i = 0; i < StartOfRound.Instance.allPlayerScripts.Length; i++)
+            {
+                if (this.PlayerIsTargetable(StartOfRound.Instance.allPlayerScripts[i], false, false))
+                {
+                    Vector3 position = StartOfRound.Instance.allPlayerScripts[i].gameplayCamera.transform.position;
+                    if (Vector3.Distance(this.eye.position, position) < (float)range && !Physics.Linecast(eyeObject.position, position, StartOfRound.Instance.collidersAndRoomMaskAndDefault, QueryTriggerInteraction.Ignore))
+                    {
+                        Vector3 to = position - eyeObject.position;
+                        if (Vector3.Angle(eyeObject.forward, to) < width || Vector3.Distance(base.transform.position, StartOfRound.Instance.allPlayerScripts[i].transform.position) < proximityCheck)
+                        {
+                            list.Add(StartOfRound.Instance.allPlayerScripts[i]);
+                        }
+                    }
+                }
+            }
+            if (list.Count == 4)
+            {
+                return StartOfRound.Instance.allPlayerScripts;
+            }
+            if (list.Count > 0)
+            {
+                return list.ToArray();
+            }
+            return null;
+        }
+
+        public bool LineOfSightForPositionCompat(Vector3 objectPosition, float width = 45f, int range = 60, float proximityAwareness = -1f, Transform overrideEye = null)
+        {
+            if (!this.isOutside)
+            {
+                if (objectPosition.y > -80f)
+                {
+                    return false;
+                }
+            }
+            else if (objectPosition.y < -100f)
+            {
+                return false;
+            }
+            Transform transform;
+            if (overrideEye != null)
+            {
+                transform = overrideEye;
+            }
+            else if (this.eye == null)
+            {
+                transform = base.transform;
+            }
+            else
+            {
+                transform = this.eye;
+            }
+            RaycastHit raycastHit;
+            if (Vector3.Distance(transform.position, objectPosition) < (float)range && !Physics.Linecast(transform.position, objectPosition, out raycastHit, StartOfRound.Instance.collidersAndRoomMaskAndDefault))
+            {
+                Vector3 to = objectPosition - transform.position;
+                if (this.debugEnemyAI)
+                {
+                    Debug.DrawRay(transform.position, objectPosition - transform.position, Color.green, 2f);
+                }
+                if (Vector3.Angle(transform.forward, to) < width || Vector3.Distance(base.transform.position, objectPosition) < proximityAwareness)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // End of borrowed functions
+
         public void PlaySound(AudioClip clip, float volume = 1f)
         {
             this.creatureVoice.PlayOneShot(clip);
@@ -133,9 +219,9 @@ namespace LethalSirenHead.Enemy
         {
             base.DoAIInterval();
             // Make sure to set the eye in the prefab or this won't work.
-            players = base.GetAllPlayersInLineOfSight(50f, 70, this.eye, 15f, StartOfRound.Instance.collidersRoomDefaultAndFoliage);
+            players = CheckLineOfSightForPositionCompat(50f, 70, this.eye, 15f, StartOfRound.Instance.collidersRoomDefaultAndFoliage);
 
-            closePlayers = base.GetAllPlayersInLineOfSight(50f, 20, this.eye, 10f, StartOfRound.Instance.collidersRoomDefaultAndFoliage);
+            closePlayers = CheckLineOfSightForPositionCompat(50f, 20, this.eye, 10f, StartOfRound.Instance.collidersRoomDefaultAndFoliage);
 
             switch (currentBehaviourStateIndex)
             {
@@ -197,7 +283,7 @@ namespace LethalSirenHead.Enemy
                     return;
                 }
             }
-            if (base.HasLineOfSightToPosition(GameNetworkManager.Instance.localPlayerController.gameplayCamera.transform.position, 45f, 70, -1f))
+            if (LineOfSightForPositionCompat(GameNetworkManager.Instance.localPlayerController.gameplayCamera.transform.position, 45f, 70, -1f))
             {
                 if (Vector3.Distance(base.transform.position, GameNetworkManager.Instance.localPlayerController.transform.position) < 15f)
                 {
