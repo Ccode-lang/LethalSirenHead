@@ -47,6 +47,8 @@ namespace LethalSirenHead
 
         public static AudioClip[] walkieChatter;
 
+        public static AudioClip OhMyGodIts;
+
         public void Awake()
         {
             AIStart = Config.Bind("General", "AI Start", "random", "The AI option to use. (tree, standard, or random)");
@@ -65,6 +67,9 @@ namespace LethalSirenHead
             spotSound = Utils.LoadSounds(Assets.MainAssetBundle, "sirenheadspot");
             stepSound = Utils.LoadSounds(Assets.MainAssetBundle, "sirenfoot");
             walkieChatter = Utils.LoadSounds(Assets.MainAssetBundle, "sirenchatter");
+
+            OhMyGodIts = Assets.MainAssetBundle.LoadAsset<AudioClip>("oh_my_god_its.wav");
+
             foreach (var x in spotSound)
             {
                 Debug.Log(x.ToString());

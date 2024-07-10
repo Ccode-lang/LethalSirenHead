@@ -308,6 +308,13 @@ namespace LethalSirenHead.Enemy
         {
             base.OnCollideWithPlayer(other);
             PlayerControllerB player = other.gameObject.GetComponent<PlayerControllerB>();
+            if (this.inSpecialAnimationWithPlayer != null) {
+                if (player.playerClientId == this.inSpecialAnimationWithPlayer.playerClientId)
+                {
+                    return;
+                }
+            }
+
             this.inSpecialAnimationWithPlayer = player;
             this.inSpecialAnimationWithPlayer.inSpecialInteractAnimation = true;
             this.inSpecialAnimationWithPlayer.inAnimationWithEnemy = this;
@@ -399,6 +406,11 @@ namespace LethalSirenHead.Enemy
             yield break;
         }
 
+        public void startTheParty()
+        {
+            PlaySound(Plugin.OhMyGodIts);
+        }
+
         public IEnumerator EatPlayer(ulong player)
         {
             PlayerControllerB PlayerObject = StartOfRound.Instance.allPlayerScripts[player];
@@ -406,10 +418,22 @@ namespace LethalSirenHead.Enemy
             {
                 this.creatureAnimator.SetBool("Eating", true);
             }
+            try
+            {
+                //Plugin.Log.LogInfo(PlayerObject.currentlyHeldObjectServer.gameObject.GetComponent<MeshFilter>().sharedMesh.name);
+                if (PlayerObject.currentlyHeldObjectServer.GetType().Name == "NoisemakerProp" && PlayerObject.currentlyHeldObjectServer.gameObject.GetComponent<MeshFilter>().sharedMesh.name == "Airhorn" && UnityEngine.Random.Range(0, 9) == 0)
+                {
+                    startTheParty();
+                }
+            } catch
+            {
+                ; //e
+            }
+
             this.inSpecialAnimation = true;
             PlayerObject.isInElevator = false;
             PlayerObject.isInHangarShipRoom = false;
-            yield return new WaitForSeconds(7.29f);
+            yield return new WaitForSeconds(5f);
             this.inSpecialAnimation = false;
             PlayerObject.KillPlayer(Vector3.zero, false, CauseOfDeath.Crushing, 0);
             makewanderClientRpc();
