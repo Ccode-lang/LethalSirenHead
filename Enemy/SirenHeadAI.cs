@@ -406,7 +406,8 @@ namespace LethalSirenHead.Enemy
             yield break;
         }
 
-        public void startTheParty()
+        [ClientRpc]
+        public void startThePartyClientRpc()
         {
             PlaySound(Plugin.OhMyGodIts);
         }
@@ -417,17 +418,18 @@ namespace LethalSirenHead.Enemy
             if (this.IsHost || this.IsServer)
             {
                 this.creatureAnimator.SetBool("Eating", true);
-            }
-            try
-            {
-                //Plugin.Log.LogInfo(PlayerObject.currentlyHeldObjectServer.gameObject.GetComponent<MeshFilter>().sharedMesh.name);
-                if (PlayerObject.currentlyHeldObjectServer.GetType().Name == "NoisemakerProp" && PlayerObject.currentlyHeldObjectServer.gameObject.GetComponent<MeshFilter>().sharedMesh.name == "Airhorn" && UnityEngine.Random.Range(0, 9) == 0)
+                try
                 {
-                    startTheParty();
+                    //Plugin.Log.LogInfo(PlayerObject.currentlyHeldObjectServer.gameObject.GetComponent<MeshFilter>().sharedMesh.name);
+                    if (PlayerObject.currentlyHeldObjectServer.GetType().Name == "NoisemakerProp" && PlayerObject.currentlyHeldObjectServer.gameObject.GetComponent<MeshFilter>().sharedMesh.name == "Airhorn" && UnityEngine.Random.Range(0, 9) == 0)
+                    {
+                        startThePartyClientRpc();
+                    }
                 }
-            } catch
-            {
-                ; //e
+                catch
+                {
+                    ; //e
+                }
             }
 
             this.inSpecialAnimation = true;
