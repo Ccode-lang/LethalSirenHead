@@ -1,12 +1,6 @@
 ﻿using GameNetcodeStuff;
-using LethalLib;
-using LethalLib.Modules;
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -37,6 +31,10 @@ namespace LethalSirenHead.Enemy
         float walkieTimer = 0f;
 
         float walkieInterval = 0f;
+
+        public Transform headPos;
+
+        ulong playerIdOfCaughtPlayer = 5;
 
         public override void Start()
         {
@@ -300,13 +298,29 @@ namespace LethalSirenHead.Enemy
             {
                 SirenHeadVars vars = gameObject.GetComponent<SirenHeadVars>();
                 this.inSpecialAnimationWithPlayer.transform.position = new Vector3(vars.holdPlayerPoint.position.x, vars.holdPlayerPoint.position.y - 0.2f, vars.holdPlayerPoint.position.z);
-                this.inSpecialAnimationWithPlayer.transform.rotation = Quaternion.Euler(vars.holdPlayerPoint.rotation.x, vars.holdPlayerPoint.rotation.y + 180, vars.holdPlayerPoint.rotation.z);
+                this.inSpecialAnimationWithPlayer.transform.LookAt(headPos);
+            }
+            if (GameNetworkManager.Instance.localPlayerController.playerClientId == playerIdOfCaughtPlayer)
+            {
+                GameNetworkManager.Instance.localPlayerController.thisPlayerModelArms.enabled = false;
+                GameNetworkManager.Instance.localPlayerController.localVisor.gameObject.GetComponentsInChildren<MeshRenderer>()[0].enabled = false;
+                GameNetworkManager.Instance.localPlayerController.gameplayCamera.transform.LookAt(headPos);
+            }
+            else
+            {
+                GameNetworkManager.Instance.localPlayerController.localVisor.gameObject.GetComponentsInChildren<MeshRenderer>()[0].enabled = true;
             }
         }
 
         public override void OnCollideWithPlayer(UnityEngine.Collider other)
         {
             base.OnCollideWithPlayer(other);
+
+            if (StartOfRound.Instance.shipIsLeaving)
+            {
+                return;
+            }
+
             PlayerControllerB player = other.gameObject.GetComponent<PlayerControllerB>();
             if (this.inSpecialAnimationWithPlayer != null) {
                 if (player.playerClientId == this.inSpecialAnimationWithPlayer.playerClientId)
@@ -337,6 +351,13 @@ namespace LethalSirenHead.Enemy
                     RequestStartEatingPlayerServerRpc(player.playerClientId);
                 }
             }
+        }
+
+        [ClientRpc]
+        public void UpdatePlayerIdOfCaughtPlayerClientRpc(ulong id)
+        {
+            Plugin.Log.LogInfo(id);
+            playerIdOfCaughtPlayer = id;
         }
 
         public void PlayFootstep()
@@ -415,6 +436,7 @@ namespace LethalSirenHead.Enemy
         public IEnumerator EatPlayer(ulong player)
         {
             PlayerControllerB PlayerObject = StartOfRound.Instance.allPlayerScripts[player];
+            UpdatePlayerIdOfCaughtPlayerClientRpc(PlayerObject.playerClientId);
             if (this.IsHost || this.IsServer)
             {
                 this.creatureAnimator.SetBool("Eating", true);
@@ -438,6 +460,8 @@ namespace LethalSirenHead.Enemy
             yield return new WaitForSeconds(5f);
             this.inSpecialAnimation = false;
             PlayerObject.KillPlayer(Vector3.zero, false, CauseOfDeath.Crushing, 0);
+            // this number is big because of lobby number mods.
+            UpdatePlayerIdOfCaughtPlayerClientRpc(10000);
             makewanderClientRpc();
             if (this.IsHost || this.IsServer)
             {
