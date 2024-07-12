@@ -3,19 +3,13 @@ using BepInEx.Logging;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BepInEx.Configuration;
 using UnityEngine;
 using LethalLib.Modules;
 using static LethalLib.Modules.Levels;
 using static LethalLib.Modules.Enemies;
-using LethalSirenHead.Enemy;
 using System.IO;
 using System.Reflection;
-using System.Collections;
-using static UnityEngine.EventSystems.EventTrigger;
 
 namespace LethalSirenHead
 {
