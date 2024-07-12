@@ -25,7 +25,7 @@ namespace LethalSirenHead
     {
         private const string MyGuid = "Ccode.SirenHead";
         private const string PluginName = "SirenHead";
-        private const string VersionString = "0.0.1";
+        private const string VersionString = "2.0.1";
 
         private static readonly Harmony Harmony = new Harmony(MyGuid);
 
@@ -51,10 +51,10 @@ namespace LethalSirenHead
 
         public void Awake()
         {
-            AIStart = Config.Bind("General", "AI Start", "random", "The AI option to use. (tree, standard, or random)");
-            walkSpeed = Config.Bind("General", "Walk Speed", 3.5f, "Walking speed.");
-            runSpeed = Config.Bind("General", "Run Speed", 7.0f, "Running speed.");
-            Levels = Config.Bind("General", "Levels", "VowLevel:100;MarchLevel:100", "Moons that it will spawn on. Format: \"MoonName:Weight;MoonName2:Weight2\". All will work as a moon name");
+            AIStart = Config.Bind("General", "AI Start Animation", "random", "Which animation Siren Head will spawn in");
+            walkSpeed = Config.Bind("General", "Siren Head Walk Speed", 3.5f, "Walking speed of Siren Head");
+            runSpeed = Config.Bind("General", "Siren Head Run Speed", 7.0f, "Running speed of Siren Head");
+            Levels = Config.Bind("General", "Moons", "VowLevel:100;MarchLevel:100", "Moons that Siren Head will spawn on. Format as: \"MoonName:SpawnWeight\". Check README for more info.");
 
 
 
