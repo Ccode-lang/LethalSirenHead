@@ -24,5 +24,6 @@ Uses [LethalLib.Modules.Levels.LevelTypes](https://github.com/EvaisaDev/LethalLi
 * Step sounds: @spinmaster6701 on Discord
 * Walkie sounds: @spinmaster6701 on Discord
 * Terminal entry: @starstruck1234 and @dotflare on Discord
+* Rewrite of README.md: [Jatc251](https://jatc251.com)
 
 The assets used in the mod can be found [here in this GitHub repository](https://github.com/Ccode-lang/LethalCompanyUnityTemplate-SirenHead).
