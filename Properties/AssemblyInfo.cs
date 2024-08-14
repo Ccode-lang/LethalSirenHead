@@ -7,12 +7,9 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyTitle("LethalSirenHead")]
 [assembly: AssemblyDescription("Adds Trevor Henderson's Siren Head to Lethal Company")]
-[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Ccode-lang")]
 [assembly: AssemblyProduct("LethalSirenHead")]
 [assembly: AssemblyCopyright("MIT License")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from

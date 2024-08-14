@@ -1,6 +1,6 @@
-MIT License
+# [LethalSirenHead](https://github.com/Ccode-lang/LethalSirenHead) MIT License
 
-Copyright (c) 2024 Ccode-lang
+Copyright (c) 2024 [Ccode-lang](https://github.com/Ccode-lang)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
