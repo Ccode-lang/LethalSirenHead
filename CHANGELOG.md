@@ -39,42 +39,50 @@
 
 # 1.2.3
 ### Fixed
-* Try to fix walking in the ship. (Again) P.S. This one seems to have worked
+* Tried to fix walking in the ship. (Again) P.S. This one seems to have worked
 
 # 1.2.2
 ### Fixed
-* Try to fix walking in the ship. (Again)
+* Tried to fix walking in the ship. (Again)
 
 # 1.2.1
 ### Changed
-* Make sounds randomized
+* Made sounds randomized
 
 # 1.1.4
 ### Changed
-* Make volume lower for radio chatter
+* Made volume lower for radio chatter
 ### Fixed
-* Fix Siren Head going through the ship (hopefully)
+* Fixed Siren Head going through the ship (hopefully)
 
 # 1.1.2
-* Add an option just to put all for the spawn planets.
+### Added
+* Added an option just to put all for the spawn planets.
 
 # 1.1.1
-* Add a config for where it spawns.
+### Added
+* Added a config for where Siren Head spawns.
 
 # 1.0.1
-* Add walkie mimic of former crews.
+### Added
+* Added walkie mimic of former crews.
 
 # 0.9.5
-* Fix netcode for animation syncing.
+### Fixed
+* Fixed netcode for animation syncing.
 
 # 0.9.1
-* Add fear level support.
+### Added
+* Added fear level support.
 
 # 0.9.0
-* Add alert sound.
-* Add footstep audio.
-* Fix transitions between states.
-* Fix configuration syncing.
+### Added
+* Added alert sound.
+* Added footstep audio.
+### Fixed
+* Fixed transitions between states.
+* Fixed configuration syncing.
 
 # 0.7.8
-* Add a working terminal entry for the bestiary.
+### Fixed
+* Added a working terminal entry for the bestiary.
