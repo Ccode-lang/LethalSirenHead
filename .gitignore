@@ -367,3 +367,8 @@ FodyWeavers.xsd
 
 # Libraries
 lib/*.dll
+
+# Thunderstore Folder
+.thunderstore/CHANGELOG.md
+.thunderstore/README.md
+.thunderstore/LICENSE.md
