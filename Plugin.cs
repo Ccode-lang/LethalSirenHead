@@ -10,11 +10,13 @@ using static LethalLib.Modules.Levels;
 using static LethalLib.Modules.Enemies;
 using System.IO;
 using System.Reflection;
+using LobbyCompatibility.Enums;
 
 namespace LethalSirenHead
 {
     [BepInPlugin(Plugin.MyGuid, Plugin.PluginName, Plugin.VersionString)]
     [BepInDependency(LethalLib.Plugin.ModGUID)]
+    [LobbyCompatibility(CompatibilityLevel.Everyone, VersionStrictness.Patch)]
     public class Plugin : BaseUnityPlugin
     {
         private const string MyGuid = "Ccode.SirenHead";
