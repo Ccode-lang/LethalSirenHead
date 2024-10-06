@@ -1,3 +1,7 @@
+# 2.0.2
+
+* Fix 6th player having their camera stuck looking at siren head.
+
 # 2.0.1
 
 * Fix players being taken out of the ship as the ship is leaving.

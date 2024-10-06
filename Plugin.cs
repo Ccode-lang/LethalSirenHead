@@ -19,7 +19,7 @@ namespace LethalSirenHead
     {
         private const string MyGuid = "Ccode.SirenHead";
         private const string PluginName = "SirenHead";
-        private const string VersionString = "2.0.1";
+        private const string VersionString = "2.0.2";
 
         private static readonly Harmony Harmony = new Harmony(MyGuid);
 

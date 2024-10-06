@@ -1,6 +1,6 @@
 {
     "name": "SirenHead",
-    "version_number": "2.0.1",
+    "version_number": "2.0.2",
     "website_url": "https://github.com/Ccode-lang/LethalSirenHead",
     "description": "Adds Trevor Henderson's Siren Head to Lethal Company",
     "dependencies": [
