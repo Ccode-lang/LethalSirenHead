@@ -364,6 +364,3 @@ FodyWeavers.xsd
 
 # Jetbrains Rider
 .idea/
-
-# Libraries
-lib/*.dll
