@@ -34,7 +34,7 @@ namespace LethalSirenHead.Enemy
 
         public Transform headPos;
 
-        ulong playerIdOfCaughtPlayer = 5;
+        ulong playerIdOfCaughtPlayer = 10000;
 
         public override void Start()
         {
