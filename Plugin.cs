@@ -45,10 +45,11 @@ namespace LethalSirenHead
 
         public void Awake()
         {
-            AIStart = Config.Bind("General", "AI Start Animation", "random", "Which animation Siren Head will spawn in");
-            walkSpeed = Config.Bind("General", "Siren Head Walk Speed", 3.5f, "Walking speed of Siren Head");
-            runSpeed = Config.Bind("General", "Siren Head Run Speed", 7.0f, "Running speed of Siren Head");
-            Levels = Config.Bind("General", "Moons", "VowLevel:100;MarchLevel:100", "Moons that Siren Head will spawn on. Format as: \"MoonName:SpawnWeight\". Check README for more info.");
+            // See README.md to see more information on available options for configuration
+            AIStart = Config.Bind("Siren Head", "AI Start Animation", "random", "Which animation Siren Head will spawn in");
+            walkSpeed = Config.Bind("Siren Head", "Siren Head Walk Speed", 3.5f, "Walking speed of Siren Head");
+            runSpeed = Config.Bind("Siren Head", "Siren Head Run Speed", 7.0f, "Running speed of Siren Head");
+            Levels = Config.Bind("Spawning", "Moons", "VowLevel:100;MarchLevel:100", "Moons that Siren Head will spawn on. Format as: \"MoonName:SpawnWeight\". Check README for more info.");
 
 
 
@@ -81,11 +82,11 @@ namespace LethalSirenHead
 
             NetworkPrefabs.RegisterNetworkPrefab(SirenEnemy.enemyPrefab);
             Harmony.PatchAll();
-            Logger.LogInfo(PluginName + " " + VersionString + " " + "loaded.");
+            Logger.LogInfo($"{PluginName} v{PluginVersion} loaded.");
             RegisterEnemy(SirenEnemy, spawnRateByLevelType, spawnRateByCustomLevelType, Node, Keyword);
             Log = Logger;
 
-            // netcode stuff
+            // NETCODE: Ensures patched NetworkBehaviours are initialized properly. Code from EvaisaDev/UnityNetcodePatcher.
             var types = Assembly.GetExecutingAssembly().GetTypes();
             foreach (var type in types)
             {
