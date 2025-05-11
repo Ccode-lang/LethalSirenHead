@@ -1,6 +1,6 @@
 # Siren Head (for Lethal Company)
 
-Adds [Trevor Henderson](https://trevorhenderson.format.com/)'s Siren Head to Lethal Company, with support for v55/56. Available to download on [Thunderstore](https://thunderstore.io/c/lethal-company/p/Ccode_lang/SirenHead/).
+Adds [Trevor Henderson](https://trevorhenderson.format.com/)'s Siren Head to Lethal Company, with support for v69. Available to download on [Thunderstore](https://thunderstore.io/c/lethal-company/p/Ccode_lang/SirenHead/).
 
 # Configuration
 

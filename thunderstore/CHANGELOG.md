@@ -1,3 +1,11 @@
+# 2.0.4
+
+* Fix a bug caused when the player becomes immortal.
+
+# 2.0.3
+
+* Forgot to upload asset bundle.
+
 # 2.0.2
 
 * Fix 6th player having their camera stuck looking at siren head.

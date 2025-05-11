@@ -329,16 +329,15 @@ namespace LethalSirenHead.Enemy
                 }
             }
 
-            this.inSpecialAnimationWithPlayer = player;
-            this.inSpecialAnimationWithPlayer.inSpecialInteractAnimation = true;
-            this.inSpecialAnimationWithPlayer.inAnimationWithEnemy = this;
+            if (player.AllowPlayerDeath()) {
+                this.inSpecialAnimationWithPlayer = player;
+                this.inSpecialAnimationWithPlayer.inSpecialInteractAnimation = true;
+                this.inSpecialAnimationWithPlayer.inAnimationWithEnemy = this;
+            }
+
             if (player != null)
             {
                 if (player.isPlayerDead)
-                {
-                    return;
-                }
-                if (!player.AllowPlayerDeath())
                 {
                     return;
                 }
@@ -436,7 +435,11 @@ namespace LethalSirenHead.Enemy
         public IEnumerator EatPlayer(ulong player)
         {
             PlayerControllerB PlayerObject = StartOfRound.Instance.allPlayerScripts[player];
-            UpdatePlayerIdOfCaughtPlayerClientRpc(PlayerObject.playerClientId);
+
+            if (PlayerObject.AllowPlayerDeath()) {
+                UpdatePlayerIdOfCaughtPlayerClientRpc(PlayerObject.playerClientId);
+            }
+
             if (this.IsHost || this.IsServer)
             {
                 this.creatureAnimator.SetBool("Eating", true);
@@ -455,11 +458,18 @@ namespace LethalSirenHead.Enemy
             }
 
             this.inSpecialAnimation = true;
-            PlayerObject.isInElevator = false;
-            PlayerObject.isInHangarShipRoom = false;
+
+            if (PlayerObject.AllowPlayerDeath())
+            {
+                PlayerObject.isInElevator = false;
+                PlayerObject.isInHangarShipRoom = false;
+            }
+
             yield return new WaitForSeconds(5f);
             this.inSpecialAnimation = false;
-            PlayerObject.KillPlayer(Vector3.zero, false, CauseOfDeath.Crushing, 0);
+
+            if (PlayerObject.AllowPlayerDeath())
+                PlayerObject.KillPlayer(Vector3.zero, false, CauseOfDeath.Crushing, 0);
             // this number is big because of lobby number mods.
             UpdatePlayerIdOfCaughtPlayerClientRpc(10000);
             makewanderClientRpc();
@@ -468,8 +478,13 @@ namespace LethalSirenHead.Enemy
                 this.creatureAnimator.SetBool("Eating", false);
             }
             this.inSpecialAnimationWithPlayer = null;
-            PlayerObject.inSpecialInteractAnimation = false;
-            PlayerObject.inAnimationWithEnemy = null;
+
+            if (PlayerObject.AllowPlayerDeath())
+            {
+                PlayerObject.inSpecialInteractAnimation = false;
+                PlayerObject.inAnimationWithEnemy = null;
+            }
+            
             yield break;
         }
     }
