@@ -1,0 +1,13 @@
+<base>
+    <tags>
+        <tag language="en-us" />
+    </tags>
+
+    <strings>
+        <!-- NOTE: If SeriousDeathNotes is turned on, it displays only the first entry, so make the first entry literal! -->
+        <DeathEnemySirenHead text="Eaten by Siren Head." />
+        <DeathEnemySirenHead text="Crushed by Siren Head." />
+        <DeathEnemySirenHead text="NINE. EIGHTEEN. ONE. CHILD. SEVENTEEN. REMOVE. VILE." /> <!-- Reference to Trevor Henderson's caption on the first Siren Head image. -->
+        <DeathEnemySirenHead text="Rushed towards the hurricane siren." />
+    </strings>
+</base>

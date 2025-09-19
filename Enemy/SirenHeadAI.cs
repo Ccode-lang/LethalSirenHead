@@ -469,7 +469,14 @@ namespace LethalSirenHead.Enemy
             this.inSpecialAnimation = false;
 
             if (PlayerObject.AllowPlayerDeath())
+            {
                 PlayerObject.KillPlayer(Vector3.zero, false, CauseOfDeath.Crushing, 0);
+                if (CoronerCompatibility.enabled)
+                {
+                    CoronerCompatibility.CoronerRegister();
+                    CoronerCompatibility.CoronerSetCauseOfDeathSirenHead(PlayerObject);
+                }
+            }
             // this number is big because of lobby number mods.
             UpdatePlayerIdOfCaughtPlayerClientRpc(10000);
             makewanderClientRpc();
