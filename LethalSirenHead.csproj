@@ -47,6 +47,9 @@
     <Reference Include="LethalLib">
       <HintPath>..\..\..\AppData\Roaming\Thunderstore Mod Manager\DataFolder\LethalCompany\profiles\Default\BepInEx\plugins\Evaisa-LethalLib\LethalLib\LethalLib.dll</HintPath>
     </Reference>
+      <Reference Include="Coroner">
+          <HintPath>..\..\..\AppData\Roaming\Thunderstore Mod Manager\DataFolder\LethalCompany\profiles\Default\BepInEx\plugins\EliteMasterEric-Coroner/Coroner.dll</HintPath>
+      </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -86,6 +89,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CoronerCompatibility.cs" />
     <Compile Include="Enemy\SirenHeadAI.cs" />
     <Compile Include="Enemy\SirenHeadAnimationCalls.cs" />
     <Compile Include="Enemy\SirenHeadVars.cs" />
