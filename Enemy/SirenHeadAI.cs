@@ -322,6 +322,12 @@ namespace LethalSirenHead.Enemy
             }
 
             PlayerControllerB player = other.gameObject.GetComponent<PlayerControllerB>();
+
+            if (player.isInHangarShipRoom)
+            {
+                return;
+            }
+
             if (this.inSpecialAnimationWithPlayer != null) {
                 if (player.playerClientId == this.inSpecialAnimationWithPlayer.playerClientId)
                 {
